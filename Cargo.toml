@@ -1,0 +1,37 @@
+[package]
+name = "async-shared-timeout"
+version = "0.1.0"
+edition = "2021"
+readme = "README.md"
+authors = ["chayleaf <chayleaf-cratesio@pavluk.org>"]
+description = "Async timeout that can be reset and shared"
+repository = "https://github.com/chayleaf/async-shared-timeout/"
+license = "0BSD OR MIT OR Apache-2.0"
+keywords = []
+categories = []
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[dependencies]
+tokio = { version = "1", features = ["time"], optional = true }
+async-io = { version = "1", optional = true }
+futures-core = { version = "0.3", optional = true }
+futures-io = { version = "0.3", optional = true }
+pin-project-lite = "0.2"
+portable-atomic = "0.3"
+
+[dev-dependencies]
+tokio-test = "0.4"
+tokio = { version = "1", features = ["time", "macros", "io-util"] }
+
+[features]
+wrapper = []
+read-write = ["wrapper"]
+stream = ["wrapper", "futures-core"]
+
+async-std = ["async-io", "futures-io"]
+
+std = []
+default = ["tokio", "std"]
