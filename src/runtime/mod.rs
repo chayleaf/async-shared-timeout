@@ -1,18 +1,15 @@
+//! Traits needed for runtime-agnostic time measurement and sleeping
 use core::{pin::Pin, time::Duration, task::{Poll, Context}};
 
 #[cfg(feature = "tokio")]
-#[cfg_attr(docsrs, doc(cfg(feature = "tokio")))]
-pub mod tokio;
+mod tokio;
 #[cfg(feature = "tokio")]
-#[cfg_attr(docsrs, doc(cfg(feature = "tokio")))]
-pub type Tokio = tokio::Runtime;
+pub use self::tokio::Runtime as Tokio;
 
 #[cfg(feature = "async-io")]
-#[cfg_attr(docsrs, doc(cfg(feature = "async-io")))]
-pub mod async_io;
+mod async_io;
 #[cfg(feature = "async-io")]
-#[cfg_attr(docsrs, doc(cfg(feature = "async-io")))]
-pub type AsyncIo = async_io::Runtime;
+pub use self::async_io::Runtime as AsyncIo;
 
 /// A sleep future
 pub trait Sleep {
@@ -24,12 +21,18 @@ pub trait Sleep {
 
 /// Async runtime
 pub trait Runtime {
+    /// Sleep future type associated with this runtime
     type Sleep: Sleep;
+    /// Instant type associated with this runtime
     type Instant: Instant;
+    /// Create a new sleep future with given timeout
     fn create_sleep(&self, timeout: Duration) -> Self::Sleep;
+    /// Get current time
     fn now(&self) -> Self::Instant;
 }
 
+/// An instant representing a point in time.
 pub trait Instant {
+    /// Duration since an earlier instant.
     fn duration_since(&self, earlier: &Self) -> Duration;
 }

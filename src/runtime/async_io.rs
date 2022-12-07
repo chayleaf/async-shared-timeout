@@ -2,12 +2,15 @@ use core::{future::Future, task::{Poll, Context}, time::Duration, pin::Pin};
 use std::time::Instant;
 use async_io::Timer;
 
+/// async-io runtime implementation
 #[derive(Copy, Clone, Default)]
+#[cfg_attr(docsrs, doc(cfg(feature = "async-io")))]
 pub struct Runtime {
     _private: (),
 }
 
 impl Runtime {
+    /// Create a new async-io runtime object
     #[must_use]
     pub fn new() -> Self {
         Self::default()
@@ -31,20 +34,9 @@ impl super::Instant for Instant {
     }
 }
 
-struct PendingFuture;
-impl Future for PendingFuture {
-    type Output = ();
-    fn poll(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<Self::Output> {
-        Poll::Pending
-    }
-}
-
 impl super::Sleep for Timer {
     fn poll_sleep(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<()> {
-        match self.poll(cx) {
-            Poll::Ready(_) => Poll::Ready(()),
-            Poll::Pending => Poll::Pending,
-        }
+        self.poll(cx).map(|_| ())
     }
     fn reset(mut self: Pin<&mut Self>, timeout: Duration) {
         self.set_after(timeout);

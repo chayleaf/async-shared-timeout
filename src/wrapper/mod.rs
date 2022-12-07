@@ -98,17 +98,6 @@ impl<'a, R: Runtime, T> Wrapper<'a, R, T> {
             timeout: CowTimeout::Ref(timeout),
         }
     }
-    /// Create a wrapper using a timeout behind an `Arc` pointer rather than a shared reference.
-    /// See [`Wrapper::new`] for more info.
-    #[cfg(feature = "std")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "std")))]
-    #[must_use]
-    pub fn new_arc(inner: T, timeout: Arc<Timeout<R>>) -> Self {
-        Self {
-            inner,
-            timeout: CowTimeout::Arc(timeout),
-        }
-    }
     /// The timeout reference
     pub fn timeout(&self) -> &Timeout<R> {
         self.timeout.as_ref()
@@ -120,6 +109,20 @@ impl<'a, R: Runtime, T> Wrapper<'a, R, T> {
     /// A mutable reference to the underlying object
     pub fn inner_mut(&mut self) -> &mut T {
         &mut self.inner
+    }
+}
+
+#[cfg(feature = "std")]
+#[cfg_attr(docsrs, doc(cfg(feature = "std")))]
+impl<R: Runtime, T> Wrapper<'static, R, T> {
+    /// Create a wrapper using a timeout behind an `Arc` pointer rather than a shared reference.
+    /// See [`Wrapper::new`] for more info.
+    #[must_use]
+    pub fn new_arc(inner: T, timeout: Arc<Timeout<R>>) -> Self {
+        Self {
+            inner,
+            timeout: CowTimeout::Arc(timeout),
+        }
     }
 }
 

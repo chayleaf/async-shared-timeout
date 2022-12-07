@@ -27,7 +27,6 @@
 use core::{future::Future, pin::Pin, sync::atomic::Ordering, task::{Context, Poll}, time::Duration};
 use portable_atomic::AtomicU64;
 
-/// Traits for implementing sleep with custom runtimes
 pub mod runtime;
 use runtime::{Instant, Runtime, Sleep};
 

@@ -27,6 +27,7 @@ A Rust crate for creating a shared timeout. A sample use case is having multiple
 
 - 0.1.0 - initial release
 - 0.1.1 - `AsRawFd` support for `Wrapper`
+- 0.2.0 - minor API cleanup
 
 ## License
 

@@ -1,12 +1,16 @@
 use core::{future::Future, pin::Pin, task::{Context, Poll}, time::Duration};
 use tokio::time::{self, Instant, Sleep};
 
+/// Tokio runtime implementation
 #[derive(Copy, Clone, Default)]
+#[cfg_attr(docsrs, doc(cfg(feature = "tokio")))]
 pub struct Runtime {
     _private: (),
 }
 
 impl Runtime {
+    /// Create a new Tokio runtime object. Current runtime will be used for sleeping. Launch
+    /// [`Timeout::wait`](`crate::Timeout::wait`) in the correct context if necessary.
     #[must_use]
     pub fn new() -> Self {
         Self::default()
