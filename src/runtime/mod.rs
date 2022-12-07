@@ -1,17 +1,17 @@
 use core::{pin::Pin, time::Duration, task::{Poll, Context}};
 
 #[cfg(feature = "tokio")]
-#[cfg_attr(docsrs, doc(cfg(all(feature = "tokio"))))]
+#[cfg_attr(docsrs, doc(cfg(feature = "tokio")))]
 pub mod tokio;
 #[cfg(feature = "tokio")]
-#[cfg_attr(docsrs, doc(cfg(all(feature = "tokio"))))]
+#[cfg_attr(docsrs, doc(cfg(feature = "tokio")))]
 pub type Tokio = tokio::Runtime;
 
 #[cfg(feature = "async-io")]
-#[cfg_attr(docsrs, doc(cfg(all(feature = "async-io"))))]
+#[cfg_attr(docsrs, doc(cfg(feature = "async-io")))]
 pub mod async_io;
 #[cfg(feature = "async-io")]
-#[cfg_attr(docsrs, doc(cfg(all(feature = "async-io"))))]
+#[cfg_attr(docsrs, doc(cfg(feature = "async-io")))]
 pub type AsyncIo = async_io::Runtime;
 
 /// A sleep future
