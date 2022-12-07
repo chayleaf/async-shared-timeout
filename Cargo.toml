@@ -7,8 +7,8 @@ authors = ["chayleaf <chayleaf-cratesio@pavluk.org>"]
 description = "Async timeout that can be reset and shared"
 repository = "https://github.com/chayleaf/async-shared-timeout/"
 license = "0BSD OR MIT OR Apache-2.0"
-keywords = []
-categories = []
+keywords = ["tokio", "sleep"]
+categories = ["asynchronous", "no-std"]
 
 [package.metadata.docs.rs]
 all-features = true
