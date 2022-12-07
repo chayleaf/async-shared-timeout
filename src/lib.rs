@@ -1,4 +1,5 @@
 #![cfg_attr(all(not(feature = "std"), not(feature = "async-io"), not(feature = "tokio")), no_std)]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 //! A crate that offers a way to create a timeout that can be reset and shared.
 //! Additionally, stream timeout is offered under a feature flag.
@@ -16,7 +17,7 @@
 //! **Integration with other runtimes**
 //!
 //! - `std` (enabled by default) - enable `std` integration. Currently it's only used to enable
-//!                                `Arc` support for the wrapper.
+//!                                `Arc` and `AsRawFd` support for the wrapper.
 //! - `tokio` (enabled by default) - [`tokio`](https://docs.rs/tokio) support
 //! - `async-io` - support [`async-io`](https://docs.rs/async-io) as the timer runtime.
 //! - `futures-io` - support [`futures-io`](https://docs.rs/futures-io) traits.
@@ -58,6 +59,7 @@ use runtime::{Instant, Runtime, Sleep};
 /// }
 /// # }
 /// ```
+#[derive(Debug)]
 pub struct Timeout<R: Runtime> {
     runtime: R,
     epoch: R::Instant,

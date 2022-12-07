@@ -5,6 +5,7 @@ use crate::runtime::Runtime;
 
 use super::Wrapper;
 
+#[cfg_attr(docsrs, doc(cfg(all(feature = "stream"))))]
 impl<R: Runtime, T: Stream> Stream for Wrapper<'_, R, T> {
     type Item = T::Item;
     fn size_hint(&self) -> (usize, Option<usize>) {

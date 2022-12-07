@@ -4,6 +4,7 @@ use crate::runtime::Runtime;
 
 use super::Wrapper;
 
+#[cfg_attr(docsrs, doc(cfg(all(feature = "futures-io", feature = "read-write"))))]
 impl<R: Runtime, T: AsyncRead> AsyncRead for Wrapper<'_, R, T> {
     fn poll_read(
         self: Pin<&mut Self>,
@@ -21,6 +22,7 @@ impl<R: Runtime, T: AsyncRead> AsyncRead for Wrapper<'_, R, T> {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(all(feature = "futures-io", feature = "read-write"))))]
 impl<R: Runtime, T: AsyncWrite> AsyncWrite for Wrapper<'_, R, T> {
     fn poll_flush(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<futures_io::Result<()>> {
         self.project().inner.poll_flush(cx)
@@ -58,6 +60,7 @@ impl<R: Runtime, T: AsyncWrite> AsyncWrite for Wrapper<'_, R, T> {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(all(feature = "futures-io", feature = "read-write"))))]
 impl<R: Runtime, T: AsyncBufRead> AsyncBufRead for Wrapper<'_, R, T> {
     fn consume(self: Pin<&mut Self>, amt: usize) {
         self.project().inner.consume(amt);
@@ -77,6 +80,7 @@ impl<R: Runtime, T: AsyncBufRead> AsyncBufRead for Wrapper<'_, R, T> {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(all(feature = "futures-io", feature = "read-write"))))]
 impl<R: Runtime, T: AsyncSeek> AsyncSeek for Wrapper<'_, R, T> {
     fn poll_seek(self: Pin<&mut Self>, cx: &mut Context<'_>, pos: futures_io::SeekFrom) -> Poll<futures_io::Result<u64>> {
         let pinned = self.project();

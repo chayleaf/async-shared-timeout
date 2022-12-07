@@ -7,6 +7,8 @@ mod tokio_read_write;
 mod futures_io_read_write;
 #[cfg(feature = "stream")]
 mod stream;
+#[cfg(all(feature = "std", unix))]
+use std::os::unix::io::{AsRawFd, RawFd};
 
 use crate::{Timeout, runtime::Runtime};
 
@@ -58,8 +60,8 @@ pin_project_lite::pin_project! {
     /// let runtime = runtime::Tokio::new();
     /// let timeout_dur = Duration::from_secs(10);
     /// let timeout = Timeout::new(runtime, timeout_dur);
-    /// let mut remote_stream = Wrapper::new(remote_stream, &timeout, timeout_dur);
-    /// let mut local_stream = Wrapper::new(local_stream, &timeout, timeout_dur);
+    /// let mut remote_stream = Wrapper::new(remote_stream, &timeout);
+    /// let mut local_stream = Wrapper::new(local_stream, &timeout);
     /// let (copied_a_to_b, copied_b_to_a) = tokio::select! {
     ///     _ = timeout.wait() => {
     ///         return Err(io::Error::new(io::ErrorKind::TimedOut, "stream timeout"))
@@ -72,6 +74,7 @@ pin_project_lite::pin_project! {
     /// # Ok(())
     /// # }
     /// ```
+    #[cfg_attr(docsrs, doc(cfg(feature = "wrapper")))]
     pub struct Wrapper<'a, R: Runtime, T> {
         #[pin]
         inner: T,
@@ -98,6 +101,7 @@ impl<'a, R: Runtime, T> Wrapper<'a, R, T> {
     /// Create a wrapper using a timeout behind an `Arc` pointer rather than a shared reference.
     /// See [`Wrapper::new`] for more info.
     #[cfg(feature = "std")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "std")))]
     #[must_use]
     pub fn new_arc(inner: T, timeout: Arc<Timeout<R>>) -> Self {
         Self {
@@ -131,7 +135,7 @@ impl<T, R: Runtime> AsMut<T> for Wrapper<'_, R, T> {
     }
 }
 
-impl<'a, R: Runtime, T: Future> Future for Wrapper<'a, R, T> {
+impl<R: Runtime, T: Future> Future for Wrapper<'_, R, T> {
     type Output = T::Output;
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
@@ -143,5 +147,13 @@ impl<'a, R: Runtime, T: Future> Future for Wrapper<'a, R, T> {
             }
             Poll::Pending => Poll::Pending,
         }
+    }
+}
+
+#[cfg(all(feature = "std", unix))]
+#[cfg_attr(docsrs, doc(cfg(all(feature = "std", unix))))]
+impl<R: Runtime, T: AsRawFd> AsRawFd for Wrapper<'_, R, T> {
+    fn as_raw_fd(&self) -> RawFd {
+        self.inner.as_raw_fd()
     }
 }

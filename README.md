@@ -17,7 +17,7 @@ A Rust crate for creating a shared timeout. A sample use case is having multiple
 **Integration with other runtimes**
 
 - `std` (enabled by default) - enable `std` integration. Currently it's only used to enable
-                               `Arc` support for the wrapper.
+                               `Arc` and `AsRawFd` support for the wrapper.
 - `tokio` (enabled by default) - [`tokio`](https://docs.rs/tokio) support
 - `async-io` - support [`async-io`](https://docs.rs/async-io) as the timer runtime.
 - `futures-io` - support [`futures-io`](https://docs.rs/futures-io) traits.
@@ -26,6 +26,7 @@ A Rust crate for creating a shared timeout. A sample use case is having multiple
 ## Changelog
 
 - 0.1.0 - initial release
+- 0.1.1 - `AsRawFd` support for `Wrapper`
 
 ## License
 
