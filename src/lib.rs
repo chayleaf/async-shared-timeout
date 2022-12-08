@@ -105,6 +105,9 @@ impl<R: Runtime> Timeout<R> {
     ///
     /// Warning: if this timeout is shorter than previous one, it will only update after the
     /// previous timeout has expired!
+    ///
+    /// Additionally, this won't automatically reset the timeout - it will only affect the next
+    /// reset.
     /// 
     /// # Panics
     /// Panics if `default_timeout` is longer than ~584 years
