@@ -1,6 +1,9 @@
-use core::{pin::Pin, task::{Context, Poll}};
-use futures_io::{AsyncRead, AsyncWrite, AsyncSeek, AsyncBufRead};
 use crate::runtime::Runtime;
+use core::{
+    pin::Pin,
+    task::{Context, Poll},
+};
+use futures_io::{AsyncBufRead, AsyncRead, AsyncSeek, AsyncWrite};
 
 use super::Wrapper;
 
@@ -65,7 +68,10 @@ impl<R: Runtime, T: AsyncBufRead> AsyncBufRead for Wrapper<'_, R, T> {
     fn consume(self: Pin<&mut Self>, amt: usize) {
         self.project().inner.consume(amt);
     }
-    fn poll_fill_buf(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<futures_io::Result<&[u8]>> {
+    fn poll_fill_buf(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+    ) -> Poll<futures_io::Result<&[u8]>> {
         let pinned = self.project();
         match pinned.inner.poll_fill_buf(cx) {
             Poll::Ready(Ok(bytes)) => {
@@ -82,7 +88,11 @@ impl<R: Runtime, T: AsyncBufRead> AsyncBufRead for Wrapper<'_, R, T> {
 
 #[cfg_attr(docsrs, doc(cfg(all(feature = "futures-io", feature = "read-write"))))]
 impl<R: Runtime, T: AsyncSeek> AsyncSeek for Wrapper<'_, R, T> {
-    fn poll_seek(self: Pin<&mut Self>, cx: &mut Context<'_>, pos: futures_io::SeekFrom) -> Poll<futures_io::Result<u64>> {
+    fn poll_seek(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        pos: futures_io::SeekFrom,
+    ) -> Poll<futures_io::Result<u64>> {
         let pinned = self.project();
         match pinned.inner.poll_seek(cx, pos) {
             Poll::Ready(Ok(pos)) => {

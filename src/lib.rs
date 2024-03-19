@@ -1,11 +1,18 @@
-#![cfg_attr(all(not(feature = "std"), not(feature = "async-io"), not(feature = "tokio")), no_std)]
+#![cfg_attr(
+    all(
+        not(feature = "std"),
+        not(feature = "async-io"),
+        not(feature = "tokio")
+    ),
+    no_std
+)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 //! A crate that offers a way to create a timeout that can be reset and shared.
 //! Additionally, stream timeout is offered under a feature flag.
 //!
 //! # Feature flags:
-//! 
+//!
 //! **Wrapper**
 //!
 //! - `wrapper` - enable a wrapper around types that you can use for easier resetting. By default,
@@ -24,7 +31,13 @@
 //! - `async-std` - [`async-std`](https://docs.rs/async-std) support (enables `async-io` and `futures-io`).
 //!
 //! See struct documentation for examples.
-use core::{future::Future, pin::Pin, sync::atomic::Ordering, task::{Context, Poll}, time::Duration};
+use core::{
+    future::Future,
+    pin::Pin,
+    sync::atomic::Ordering,
+    task::{Context, Poll},
+    time::Duration,
+};
 use portable_atomic::AtomicU64;
 
 pub mod runtime;
@@ -66,6 +79,25 @@ pub struct Timeout<R: Runtime> {
     default_timeout: AtomicU64,
 }
 
+#[cfg(feature = "tokio")]
+impl Timeout<runtime::Tokio> {
+    /// Create a new timeout that expires after `default_timeout`, creating a runtime with [`runtime::Tokio::new`]
+    ///
+    /// # Panics
+    /// Panics if `default_timeout` is longer than ~584 years
+    pub fn new_tokio(default_timeout: Duration) -> Self {
+        let runtime = runtime::Tokio::new();
+        let epoch = runtime.now();
+        let default_timeout = u64::try_from(default_timeout.as_nanos()).unwrap();
+        Self {
+            runtime,
+            epoch,
+            timeout_from_epoch_ns: default_timeout.into(),
+            default_timeout: default_timeout.into(),
+        }
+    }
+}
+
 impl<R: Runtime> Timeout<R> {
     /// Create a new timeout that expires after `default_timeout`
     ///
@@ -94,7 +126,11 @@ impl<R: Runtime> Timeout<R> {
     /// # Panics
     /// Panics if over ~584 years have elapsed since the timer started.
     pub fn reset(&self) {
-        self.timeout_from_epoch_ns.store(u64::try_from(self.elapsed().as_nanos()).unwrap() + self.default_timeout.load(Ordering::Acquire), Ordering::Release);
+        self.timeout_from_epoch_ns.store(
+            u64::try_from(self.elapsed().as_nanos()).unwrap()
+                + self.default_timeout.load(Ordering::Acquire),
+            Ordering::Release,
+        );
     }
 
     /// The default timeout. Timeout will be reset to this value upon a successful operation.
@@ -108,11 +144,14 @@ impl<R: Runtime> Timeout<R> {
     ///
     /// Additionally, this won't automatically reset the timeout - it will only affect the next
     /// reset.
-    /// 
+    ///
     /// # Panics
     /// Panics if `default_timeout` is longer than ~584 years
     pub fn set_default_timeout(&self, default_timeout: Duration) {
-        self.default_timeout.store(u64::try_from(default_timeout.as_nanos()).unwrap(), Ordering::Release);
+        self.default_timeout.store(
+            u64::try_from(default_timeout.as_nanos()).unwrap(),
+            Ordering::Release,
+        );
     }
 
     fn timeout_duration(&self) -> Option<Duration> {

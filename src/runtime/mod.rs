@@ -1,5 +1,9 @@
 //! Traits needed for runtime-agnostic time measurement and sleeping
-use core::{pin::Pin, time::Duration, task::{Poll, Context}};
+use core::{
+    pin::Pin,
+    task::{Context, Poll},
+    time::Duration,
+};
 
 #[cfg(feature = "tokio")]
 mod tokio;

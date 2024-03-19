@@ -1,16 +1,20 @@
-use core::{future::Future, pin::Pin, task::{Poll, Context}};
+use core::{
+    future::Future,
+    pin::Pin,
+    task::{Context, Poll},
+};
 #[cfg(feature = "std")]
 use std::sync::Arc;
-#[cfg(all(feature = "tokio", feature = "read-write"))]
-mod tokio_read_write;
 #[cfg(all(feature = "futures-io", feature = "read-write"))]
 mod futures_io_read_write;
 #[cfg(feature = "stream")]
 mod stream;
+#[cfg(all(feature = "tokio", feature = "read-write"))]
+mod tokio_read_write;
 #[cfg(all(feature = "std", unix))]
 use std::os::unix::io::{AsRawFd, RawFd};
 
-use crate::{Timeout, runtime::Runtime};
+use crate::{runtime::Runtime, Timeout};
 
 #[derive(Clone)]
 enum CowTimeout<'a, R: Runtime> {
@@ -43,7 +47,7 @@ pin_project_lite::pin_project! {
     ///   think this should be changed!
     /// - In case of a [`Stream`](futures_core::Stream) object, timeout will be reset upon stream
     ///   advancement.
-    /// 
+    ///
     /// Since [`Wrapper::new`] accepts a shared reference to `Timeout`, you can make multiple
     /// objects use a single timeout. This means the timeout will only expire when *all* objects
     /// stopped having new events.
@@ -85,9 +89,9 @@ pin_project_lite::pin_project! {
 impl<'a, R: Runtime, T> Wrapper<'a, R, T> {
     /// Create a wrapper around an object that will update the given timeout upon successful
     /// operations
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// - `inner` - the object to be wrapped
     /// - `timeout` - a reference to the timeout to be used for operations on `inner`
     /// - `default_timeout` - on a successful operation, `timeout` will be [reset](`Timeout::reset`) to this value

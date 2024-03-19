@@ -1,6 +1,6 @@
 [package]
 name = "async-shared-timeout"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 readme = "README.md"
 authors = ["chayleaf <chayleaf-cratesio@pavluk.org>"]
@@ -20,7 +20,7 @@ async-io = { version = "1", optional = true }
 futures-core = { version = "0.3", optional = true }
 futures-io = { version = "0.3", optional = true }
 pin-project-lite = "0.2"
-portable-atomic = "0.3"
+portable-atomic = "1"
 
 [dev-dependencies]
 tokio-test = "0.4"

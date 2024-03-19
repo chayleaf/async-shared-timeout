@@ -1,4 +1,9 @@
-use core::{future::Future, pin::Pin, task::{Context, Poll}, time::Duration};
+use core::{
+    future::Future,
+    pin::Pin,
+    task::{Context, Poll},
+    time::Duration,
+};
 use tokio::time::{self, Instant, Sleep};
 
 /// Tokio runtime implementation

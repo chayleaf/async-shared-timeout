@@ -1,6 +1,11 @@
-use core::{future::Future, task::{Poll, Context}, time::Duration, pin::Pin};
-use std::time::Instant;
 use async_io::Timer;
+use core::{
+    future::Future,
+    pin::Pin,
+    task::{Context, Poll},
+    time::Duration,
+};
+use std::time::Instant;
 
 /// async-io runtime implementation
 #[derive(Copy, Clone, Default)]

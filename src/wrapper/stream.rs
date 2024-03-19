@@ -1,7 +1,10 @@
-use core::{pin::Pin, task::{Context, Poll}};
+use core::{
+    pin::Pin,
+    task::{Context, Poll},
+};
 
-use futures_core::Stream;
 use crate::runtime::Runtime;
+use futures_core::Stream;
 
 use super::Wrapper;
 
@@ -18,8 +21,7 @@ impl<R: Runtime, T: Stream> Stream for Wrapper<'_, R, T> {
                 pinned.timeout.as_ref().reset();
                 Poll::Ready(x)
             }
-            Poll::Pending => Poll::Pending
+            Poll::Pending => Poll::Pending,
         }
     }
 }
-
