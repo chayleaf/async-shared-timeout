@@ -29,6 +29,7 @@ A Rust crate for creating a shared timeout. A sample use case is having multiple
 - 0.1.1 - `AsRawFd` support for `Wrapper`
 - 0.2.0 - minor API cleanup
 - 0.2.1 - updated dependencies, added `Timeout::new_tokio`
+- 0.2.2 - add `TokioTimeout` and `TokioWrapper` type aliases
 
 ## License
 

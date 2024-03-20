@@ -79,8 +79,12 @@ pub struct Timeout<R: Runtime> {
     default_timeout: AtomicU64,
 }
 
+/// An alias for [`Timeout`] using the tokio runtime
 #[cfg(feature = "tokio")]
-impl Timeout<runtime::Tokio> {
+pub type TokioTimeout = Timeout<runtime::Tokio>;
+
+#[cfg(feature = "tokio")]
+impl TokioTimeout {
     /// Create a new timeout that expires after `default_timeout`, creating a runtime with [`runtime::Tokio::new`]
     ///
     /// # Panics
@@ -198,6 +202,8 @@ impl<R: Runtime> Timeout<R> {
 mod wrapper;
 #[cfg(feature = "wrapper")]
 pub use wrapper::Wrapper;
+#[cfg(all(feature = "wrapper", feature = "tokio"))]
+pub use wrapper::TokioWrapper;
 
 #[cfg(test)]
 mod tests {

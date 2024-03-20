@@ -86,6 +86,10 @@ pin_project_lite::pin_project! {
     }
 }
 
+/// An alias for [`Wrapper`] using the tokio runtime
+#[cfg(feature = "tokio")]
+pub type TokioWrapper<'a, T> = Wrapper<'a, crate::runtime::Tokio, T>;
+
 impl<'a, R: Runtime, T> Wrapper<'a, R, T> {
     /// Create a wrapper around an object that will update the given timeout upon successful
     /// operations
